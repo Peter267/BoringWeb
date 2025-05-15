@@ -127,6 +127,11 @@
 <body>
     <div class="theme-toggle">🌓</div>
     
+    <header style="text-align: center; margin: 2rem 0">
+        <h1>BoringWeb</h1>
+        <p style="color: var(--text); opacity: 0.8">信息课上打会游戏吧~~~</p>
+    </header>
+
     <div class="search-box">
         <input type="text" id="searchInput" placeholder="搜索站点..." class="skeleton">
     </div>
@@ -137,11 +142,6 @@
 
 <script>
 const CACHE_TIME = 3600 * 1000;
-
-<header style="text-align: center; margin: 2rem 0">
-    <h1>BoringWeb</h1>
-    <p style="color: var(--text); opacity: 0.8">信息课上打会游戏吧~~~</p>
-</header>
 
 // 增强版信息获取
 async function getLinkInfo(url) {
@@ -161,7 +161,7 @@ async function getLinkInfo(url) {
         return {
             name: new URL(url).hostname.replace('www.', ''),
             description: '',
-            icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiBmaWxsPSIjZmZmIi8+PC9zdmc+'
+            icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiBfiWxsPSIjZmZmIi8+PC9zdmc+'
         };
     }
 }
