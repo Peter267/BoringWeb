@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>极简导航站</title>
+    <!-- 预加载关键资源 -->
+    <link rel="preload" href="links.json" as="fetch" crossorigin>
+    <style>
+        :root {
+            --bg: #fff;
+            --text: #333;
+            --card-bg: #f8f9fa;
+            --border: #e9ecef;
+        }
+
+        [data-theme="dark"] {
+            --bg: #1a1a1a;
+            --text: #e0e0e0;
+            --card-bg: #2d2d2d;
+            --border: #404040;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 1rem;
+            transition: background 0.3s;
+        }
+
+        /* 暗黑模式切换按钮 */
+        .theme-toggle {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            background: var(--card-bg);
+        }
+
+        /* 搜索框样式 */
+        .search-box {
+            max-width: 600px;
+            margin: 1rem auto;
+        }
+        #searchInput {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--card-bg);
+            color: var(--text);
+        }
+
+        /* 链接卡片 */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .link-card {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-radius: 8px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            text-decoration: none;
+            color: inherit;
+            transition: transform 0.2s;
+        }
+        .link-card:hover {
+            transform: translateY(-2px);
+        }
+
+        /* 图片懒加载 */
+        .lazyload {
+            background: #ddd;
+            min-width: 40px;
+            height: 40px;
+            border-radius: 6px;
+        }
+        .lazyload.loaded {
+            background: none;
+        }
+
+        /* 骨架屏动画 */
+        @keyframes loading {
+            50% { opacity: 0.6; }
+        }
+        .skeleton {
+            animation: loading 1.5s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="theme-toggle">🌓</div>
+    
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="搜索站点..." class="skeleton">
+    </div>
+
+    <div class="grid" id="linksContainer">
+        <!-- 初始加载显示10个骨架屏 -->
+        ${Array(10).fill('<div class="link-card skeleton" style="height:60px"></div>').join('')}
+    </div>
+
+<script>
+// 配置项
+const CACHE_TIME = 3600 * 1000; // 1小时缓存
+
+// 暗黑模式切换
+document.querySelector('.theme-toggle').addEventListener('click', () => {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    localStorage.setItem('theme', isDark ? 'light' : 'dark');
+});
+
+// 性能优化：带缓存的Fetch
+async function cachedFetch(url) {
+    const cacheKey = `cache_${url}`;
+    const cached = localStorage.getItem(cacheKey);
+    if (cached && Date.now() < JSON.parse(cached).expiry) {
+        return JSON.parse(cached).data;
+    }
+    
+    const response = await fetch(url);
+    const data = await response.json();
+    localStorage.setItem(cacheKey, JSON.stringify({
+        data,
+        expiry: Date.now() + CACHE_TIME
+    }));
+    return data;
+}
+
+// 自动填充信息
+async function enhanceLink(link) {
+    if (!link.name || !link.icon) {
+        const domain = new URL(link.url).hostname;
+        const favicon = `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+        
+        return {
+            name: link.name || domain.replace('www.', ''),
+            icon: link.icon || favicon,
+            url: link.url
+        };
+    }
+    return link;
+}
+
+// 初始化
+async function init() {
+    try {
+        // 加载主题设置
+        const savedTheme = localStorage.getItem('theme') || 
+            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', savedTheme);
+
+        // 加载数据
+        const { links } = await cachedFetch('links.json');
+        const enhancedLinks = await Promise.all(links.map(enhanceLink));
+        
+        // 渲染列表
+        renderLinks(enhancedLinks);
+        initSearch();
+        initLazyLoad();
+    } catch (error) {
+        document.getElementById('linksContainer').innerHTML = 
+            '<div style="text-align:center;color:red">数据加载失败</div>';
+    }
+}
+
+// 渲染链接
+function renderLinks(links) {
+    const container = document.getElementById('linksContainer');
+    container.innerHTML = links.map(link => `
+        <a href="${link.url}" class="link-card" target="_blank">
+            <img class="lazyload" data-src="${link.icon}" alt="${link.name}">
+            <span>${link.name}</span>
+        </a>
+    `).join('');
+}
+
+// 搜索功能
+function initSearch() {
+    const searchInput = document.getElementById('searchInput');
+    searchInput.addEventListener('input', function() {
+        const keyword = this.value.toLowerCase();
+        document.querySelectorAll('.link-card').forEach(card => {
+            const match = card.textContent.toLowerCase().includes(keyword);
+            card.style.display = match ? 'flex' : 'none';
+        });
+    });
+}
+
+// 图片懒加载
+function initLazyLoad() {
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const img = entry.target.querySelector('img');
+                if (img && img.dataset.src) {
+                    img.src = img.dataset.src;
+                    img.classList.add('loaded');
+                }
+            }
+        });
+    });
+
+    document.querySelectorAll('.link-card').forEach(card => {
+        observer.observe(card);
+    });
+}
+
+// 启动
+init();
+</script>
+</body>
+</html>
