@@ -1,16 +1,35 @@
 {
     "links": [
         {
-            "url": "https://github.com",
-            "name": "GitHub社区",  // 手动覆盖名称
-            "icon": "https://mycdn.com/github.png"  // 自定义图标
+            "url": "https://www.mc.js.cool",
+            "name": "MC.JS",  
+            "icon": "https://www.mc.js.cool/images/favicon.ico",
+            "description": "网页版MC最佳中文版！免费 无广告 免下载 本地化 在线联机"  
         },
         {
-            "url": "https://stackoverflow.com",
-            "description": "程序员问答平台"  // 仅补充描述
+            "url": "https://minesweeper.online",
+            "name": "扫雷",  
+            "icon": "https://minesweeper.online/img/minesweeper-online.svg",
+            "description": "大型在线扫雷社区。无需下载或注册，网页端免费畅玩。"  
         },
         {
-            "url": "https://medium.com"  // 完全自动获取
+            "url": "https://www.heyzxz.me/pcol",
+            "name": "斯诺克台球"
+        },
+        {
+            "url": "https://minesweeper.online",
+            "name": "扫雷",  
+            "icon": "https://minesweeper.online/img/minesweeper-online.svg" , 
+            "description": "大型在线扫雷社区。无需下载或注册，网页端免费畅玩。"  
+        },
+        {
+            "url": "https://blocks.ovh,
+            "name": "The Blocks",  
+            "icon": "https://blocks.ovh/img/logo.png" , 
+            "description": "积木游戏--充满挑战的益智游戏，让你沉迷其中."  
+        },
+        {
+            "url": "https://medium.com" 
         }
     ]
 }
