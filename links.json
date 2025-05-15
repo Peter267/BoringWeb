@@ -1,8 +1,16 @@
 {
     "links": [
-        {"url": "https://github.com"},
-        {"url": "https://stackoverflow.com"},
-        {"url": "https://medium.com"},
-        {"url": "https://developer.mozilla.org"}
+        {
+            "url": "https://github.com",
+            "name": "GitHub社区",  // 手动覆盖名称
+            "icon": "https://mycdn.com/github.png"  // 自定义图标
+        },
+        {
+            "url": "https://stackoverflow.com",
+            "description": "程序员问答平台"  // 仅补充描述
+        },
+        {
+            "url": "https://medium.com"  // 完全自动获取
+        }
     ]
 }
