@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BoringWeb</title>
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
     <!-- 预加载关键资源 -->
     <link rel="preload" href="links.json" as="fetch" crossorigin>
     <style>
@@ -136,6 +137,11 @@
 
 <script>
 const CACHE_TIME = 3600 * 1000;
+
+<header style="text-align: center; margin: 2rem 0">
+    <h1>BoringWeb</h1>
+    <p style="color: var(--text); opacity: 0.8">信息课上打会游戏吧~~~</p>
+</header>
 
 // 增强版信息获取
 async function getLinkInfo(url) {
